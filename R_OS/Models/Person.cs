@@ -7,6 +7,6 @@ namespace R_OS.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Company { get; set; }
-        public virtual List<ContactInformation> ContactInfo { get; set; }
+        public virtual List<ContactInformation> ContactInfo { get; set; } = new();
     }
 }

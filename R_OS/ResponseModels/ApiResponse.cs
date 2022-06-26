@@ -10,7 +10,7 @@
 
         public string ResultMessage { get; set; }
 
-        public T ResultObject { get; set; }
+        public T? ResultObject { get; set; }
 
         public ApiResponse(T resultObject, bool status = true, int resultCode = 200, string resultMessage = "Your operation has been completed successfully.")
         {
