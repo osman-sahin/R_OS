@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using R_OS.Business;
 using R_OS.Context;
-using R_OS.Models;
 using R_OS.Services;
+using MassTransit;
+using R_OS.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,13 +20,16 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddMassTransit(config =>
+{
+    config.UsingRabbitMq((ctx, cfg) =>
+    {
+        cfg.Host("amqp://guest:guest@localhost:5672");
+    });
+});
 
 var app = builder.Build();
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dbContext = scope.ServiceProvider.GetRequiredService<AddressBookContext>();
-//}
 
 
 // Configure the HTTP request pipeline.
@@ -40,5 +44,21 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+var bus = Bus.Factory.CreateUsingRabbitMq(config =>
+{
+    config.Host("amqp://guest:guest@localhost:5672");
+    config.ReceiveEndpoint("report-queue", c =>
+    {
+        c.Handler<ReportQueueModel>(ctx =>
+        {
+            return Console.Out.WriteLineAsync($"Queued: {ctx.Message.ReportUUID.ToString()}");
+        });
+    });
+});
+
+bus.Start();
+
+bus.Publish(new ReportQueueModel { ReportUUID = Guid.NewGuid() });
 
 app.Run();
