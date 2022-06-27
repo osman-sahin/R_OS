@@ -47,7 +47,7 @@ namespace R_OS.Business
             }
         }
 
-        public async Task<ApiResponse<IEnumerable<ContactInformation>>> GetAllByPersonIdAsync(Guid? personId)
+        public async Task<ApiResponse<IEnumerable<ContactInformation>>> GetAllAsync()
         {
             var result = await _service.GetAll();
             return result;

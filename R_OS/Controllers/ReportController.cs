@@ -6,7 +6,7 @@ using R_OS.ResponseModels;
 
 namespace R_OS.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/report")]
     [ApiController]
     public class ReportController : ControllerBase
     {

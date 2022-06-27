@@ -45,20 +45,20 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-var bus = Bus.Factory.CreateUsingRabbitMq(config =>
-{
-    config.Host("amqp://guest:guest@localhost:5672");
-    config.ReceiveEndpoint("report-queue", c =>
-    {
-        c.Handler<ReportQueueModel>(ctx =>
-        {
-            return Console.Out.WriteLineAsync($"Queued: {ctx.Message.ReportUUID.ToString()}");
-        });
-    });
-});
+//var bus = Bus.Factory.CreateUsingRabbitMq(config =>
+//{
+//    config.Host("amqp://guest:guest@localhost:5672");
+//    config.ReceiveEndpoint("create-report-queue", c =>
+//    {
+//        c.Handler<ReportQueueModel>(ctx =>
+//        {
+//            return Console.Out.WriteLineAsync($"Queued: {ctx.Message.ReportUUID.ToString()}");
+//        });
+//    });
+//});
 
-bus.Start();
+//bus.Start();
 
-bus.Publish(new ReportQueueModel { ReportUUID = Guid.NewGuid() });
+//bus.Publish(new ReportQueueModel { ReportUUID = Guid.NewGuid() });
 
 app.Run();

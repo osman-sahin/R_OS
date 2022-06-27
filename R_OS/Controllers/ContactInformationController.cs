@@ -7,7 +7,7 @@ using R_OS.ResponseModels;
 
 namespace R_OS.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/contactInfo")]
     [ApiController]
     public class ContactInformationController : ControllerBase
     {
@@ -16,6 +16,10 @@ namespace R_OS.Controllers
         {
             _contactInformationBusiness = contactInformationBusiness;
         }
+
+        // GET api/<ContactInformationController>
+        [HttpGet]
+        public async Task<ApiResponse<IEnumerable<ContactInformation>>> Get() => await _contactInformationBusiness.GetAllAsync();
         // POST api/<ContactInformationController>
         [HttpPost]
         public async Task<ApiResponse<ContactInformation>> Post([FromBody] ContactInformation contactInfo) => await _contactInformationBusiness.CreateAsync(contactInfo);
