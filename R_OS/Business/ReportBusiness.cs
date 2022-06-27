@@ -1,4 +1,5 @@
-﻿using R_OS.Models;
+﻿using MassTransit;
+using R_OS.Models;
 using R_OS.ResponseModels;
 using R_OS.Services;
 
@@ -7,10 +8,12 @@ namespace R_OS.Business
     public class ReportBusiness : IReportBusiness
     {
         private readonly IRepository<Report> _service;
+        private readonly IPublishEndpoint _publishEndpoint;
 
-        public ReportBusiness(IRepository<Report> service)
+        public ReportBusiness(IRepository<Report> service, IPublishEndpoint publishEndpoint)
         {
             _service = service;
+            _publishEndpoint = publishEndpoint;
         }
         public async Task<ApiResponse<Report>> CreateAsync()
         {
@@ -18,8 +21,11 @@ namespace R_OS.Business
             try
             {
                 var result = await _service.Insert(report);
-
-                // Publish to querying service
+                if (result.ResultObject is not null)
+                    await _publishEndpoint.Publish(new ReportQueueModel
+                    {
+                        ReportUUID = result.ResultObject.UUID
+                    }); ;
 
                 return new ApiResponse<Report>(report);
 
